@@ -50,7 +50,7 @@ const Profile = (props) => {
   };
 
   const removeFollow = async (username, followerUsername, flagFollow) => {
-    await fetch(`/api/profile/followers`, {
+    await fetch(`http://localhost:7000/api/profile/followers`, {
       method: "PUT",
       crossDomain: true,
       body: JSON.stringify({
@@ -90,7 +90,7 @@ const Profile = (props) => {
       <br />
       <br />
       <br />
-      <TableContainer component={Paper} className="container">
+      <TableContainer style={{overflow: 'auto'}} component={Paper} className="container">
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>

@@ -88,7 +88,7 @@ const LoginReg = (props) => {
   const handleRegister = async (e) => {
     e.preventDefault();
     if (RegisterDisabled) return;
-    await fetch(`/api/auth/register`, {
+    await fetch(`http://localhost:7000/api/auth/register`, {
       method: "POST",
       crossDomain: true,
       body: JSON.stringify(RegisterData),
@@ -131,7 +131,7 @@ const LoginReg = (props) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     if (LoginDisabled === 1) return;
-    await fetch(`/api/auth/login`, {
+    await fetch(`http://localhost:7000/api/auth/login`, {
       method: "POST",
       crossDomain: true,
       body: JSON.stringify(loginData),

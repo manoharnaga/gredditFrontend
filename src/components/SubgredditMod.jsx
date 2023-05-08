@@ -72,7 +72,7 @@ const SubGredditMod = (props) => {
     const _id = localStorage.getItem("modsubgredditId");
     const getSubGredditData = async () => {
       console.log("Page Loaded/Refreshed");
-      await fetch(`/api/mysubgredditsmod/data`, {
+      await fetch(`http://localhost:7000/api/mysubgredditsmod/data`, {
         method: "POST",
         crossDomain: true,
         body: JSON.stringify({ id: _id }),
@@ -116,7 +116,7 @@ const SubGredditMod = (props) => {
 
   const handleRequest = async (username, flagRequest) => {
     const _id = localStorage.getItem("modsubgredditId");
-    await fetch(`/api/mysubgredditsmod/request`, {
+    await fetch(`http://localhost:7000/api/mysubgredditsmod/request`, {
       method: "PUT",
       crossDomain: true,
       body: JSON.stringify({
@@ -146,7 +146,7 @@ const SubGredditMod = (props) => {
   };
 
   const DeletePostReport = (subid, postid, postobjid, reportid) => {
-    fetch(`/api/mysubgredditsmod/delpost`, {
+    fetch(`http://localhost:7000/api/mysubgredditsmod/delpost`, {
       method: "PUT",
       crossDomain: true,
       body: JSON.stringify({
@@ -193,7 +193,7 @@ const SubGredditMod = (props) => {
   };
 
   const blockReportedUser = (blockDataObj) => {
-    fetch(`/api/mysubgredditsmod/blockuser`, {
+    fetch(`http://localhost:7000/api/mysubgredditsmod/blockuser`, {
       method: "PUT",
       crossDomain: true,
       body: JSON.stringify({
@@ -232,7 +232,7 @@ const SubGredditMod = (props) => {
   };
 
   const delTimedOutReports = (curTimeInms) => {
-    fetch(`/api/mysubgredditsmod/deltimedoutreports`, {
+    fetch(`http://localhost:7000/api/mysubgredditsmod/deltimedoutreports`, {
       method: "PUT",
       crossDomain: true,
       body: JSON.stringify({

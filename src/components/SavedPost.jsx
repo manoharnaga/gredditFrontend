@@ -29,7 +29,7 @@ const SavedPost = (props) => {
     // function to be called on page load/refresh
     const SubgredditObj = () => {
       console.log("Page loaded/refreshed");
-      fetch(`/api/akasubgreddits/dataall`, {
+      fetch(`http://localhost:7000/api/akasubgreddits/dataall`, {
         method: "GET",
         crossDomain: true,
         headers: {
@@ -93,7 +93,7 @@ const SavedPost = (props) => {
   };
 
   const addFollow = async (username, followerUsername) => {
-    await fetch(`/api/akasubgreddits/follow`, {
+    await fetch(`http://localhost:7000/api/akasubgreddits/follow`, {
       method: "PUT",
       crossDomain: true,
       body: JSON.stringify({
@@ -122,7 +122,7 @@ const SavedPost = (props) => {
   const handleUpdatePost = (UpdatePost) => {
     console.log("UpdatePost");
 
-    fetch(`/api/savedpost/updatepost`, {
+    fetch(`http://localhost:7000/api/savedpost/updatepost`, {
       method: "PUT",
       crossDomain: true,
       body: JSON.stringify(UpdatePost),
@@ -144,7 +144,7 @@ const SavedPost = (props) => {
   };
 
   const handleRemoveSavedPost = async (SavedPost) => {
-    await fetch(`/api/savedpost/remove`, {
+    await fetch(`http://localhost:7000/api/savedpost/remove`, {
       method: "PUT",
       crossDomain: true,
       body: JSON.stringify(SavedPost),

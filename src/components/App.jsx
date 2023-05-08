@@ -39,7 +39,7 @@ const App = () => {
     const userObj = async () => {
       console.log("Page loaded/refreshed");
       console.log("logindata from localStorage", loginData);
-      await fetch(`/api/auth/loginstore`, {
+      await fetch(`http://localhost:7000/api/auth/loginstore`, {
         method: "POST",
         crossDomain: true,
         body: JSON.stringify(loginData),

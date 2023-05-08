@@ -72,7 +72,7 @@ const EditProfile = (props) => {
 
   const handleEditProfile = async (e) => {
     e.preventDefault();
-    await fetch(`/api/profile/editprofile`, {
+    await fetch(`http://localhost:7000/api/profile/editprofile`, {
       method: "PUT",
       crossDomain: true,
       body: JSON.stringify(ProfileData),

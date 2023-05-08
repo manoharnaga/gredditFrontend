@@ -90,7 +90,7 @@ const AkaSubGreddit = (props) => {
     // function to be called on page load/refresh
     const SubgredditObj = () => {
       console.log("Page loaded/refreshed");
-      fetch(`${process.env.process.env.URL_PATH}/akasubgreddits/dataall`, {
+      fetch(`http://localhost:7000/api/akasubgreddits/dataall`, {
         method: "GET",
         crossDomain: true,
         headers: {
@@ -145,7 +145,7 @@ const AkaSubGreddit = (props) => {
 
   const joinOrLeaveSubGreddit = (subgredditId, isJoinOrLeave) => {
     console.log("joinreq");
-    fetch(`/api/akasubgreddits/joinreq`, {
+    fetch(`http://localhost:7000/api/akasubgreddits/joinreq`, {
       method: "PUT",
       crossDomain: true,
       body: JSON.stringify({

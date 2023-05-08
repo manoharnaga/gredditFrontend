@@ -39,7 +39,7 @@ const MySubGreddits = (props) => {
     // function to be called on page load/refresh
     const SubgredditObj = () => {
       console.log("Page loaded/refreshed");
-      fetch(`/api/mysubgreddits/data`, {
+      fetch(`http://localhost:7000/api/mysubgreddits/data`, {
         method: "POST",
         crossDomain: true,
         body: JSON.stringify({
@@ -124,7 +124,7 @@ const MySubGreddits = (props) => {
     e.preventDefault();
     if (SubGredditDisabled) return;
 
-    fetch(`/api/mysubgreddits/add`, {
+    fetch(`http://localhost:7000/api/mysubgreddits/add`, {
       method: "POST",
       crossDomain: true,
       body: JSON.stringify({
@@ -149,7 +149,7 @@ const MySubGreddits = (props) => {
   };
 
   const DeleteSubGreddit = (_id) => {
-    fetch(`/api/mysubgreddits/delete/${_id}`, {
+    fetch(`http://localhost:7000/api/mysubgreddits/delete/${_id}`, {
       method: "DELETE",
       crossDomain: true,
       // body: JSON.stringify({id:_id}),

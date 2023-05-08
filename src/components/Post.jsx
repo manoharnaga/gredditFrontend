@@ -71,7 +71,7 @@ const Post = (props) => {
 
     const getSubGredditData = async () => {
       console.log("Page Loaded/Refreshed");
-      await fetch(`/api/akasubgreddits/data`, {
+      await fetch(`http://localhost:7000/api/akasubgreddits/data`, {
         method: "POST",
         crossDomain: true,
         body: JSON.stringify({ id: _id }),
@@ -159,7 +159,7 @@ const Post = (props) => {
 
     // const finalText = newTextArr.join(" ");
 
-    fetch(`/api/akasubgreddits/addpost`, {
+    fetch(`http://localhost:7000/api/akasubgreddits/addpost`, {
       method: "PUT",
       crossDomain: true,
       body: JSON.stringify({
@@ -204,7 +204,7 @@ const Post = (props) => {
   ) => {
     if (ReportDisabled) return;
 
-    await fetch(`/api/akasubgreddits/reportpost`, {
+    await fetch(`http://localhost:7000/api/akasubgreddits/reportpost`, {
       method: "PUT",
       crossDomain: true,
       body: JSON.stringify({
@@ -234,7 +234,7 @@ const Post = (props) => {
   };
 
   const handleSavedPost = async (SavedPost) => {
-    await fetch(`/api/savedpost/add`, {
+    await fetch(`http://localhost:7000/api/savedpost/add`, {
       method: "PUT",
       crossDomain: true,
       body: JSON.stringify(SavedPost),
@@ -257,7 +257,7 @@ const Post = (props) => {
   const handleUpdatePost = (UpdatePost) => {
     console.log("UpdatePost");
 
-    fetch(`/api/akasubgreddits/updatepost`, {
+    fetch(`http://localhost:7000/api/akasubgreddits/updatepost`, {
       method: "PUT",
       crossDomain: true,
       body: JSON.stringify(UpdatePost),
@@ -278,7 +278,7 @@ const Post = (props) => {
   };
 
   const addFollow = async (username, followerUsername) => {
-    await fetch(`/api/akasubgreddits/follow`, {
+    await fetch(`http://localhost:7000/api/akasubgreddits/follow`, {
       method: "PUT",
       crossDomain: true,
       body: JSON.stringify({
