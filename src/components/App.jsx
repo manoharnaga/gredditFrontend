@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 
-import LoginReg from "./LoginReg";
-// import Navbar from "./Navbar";
+import SignIn from "./SignIn";
+import SignUp from "./SignUp";
 import Home from "./Home";
 import Profile from "./Profile";
 import MySubGreddits from "./MySubgreddits";
@@ -41,12 +41,9 @@ const App = () => {
       console.log("logindata from localStorage", loginData);
       await fetch(`http://localhost:7000/api/auth/loginstore`, {
         method: "POST",
-        crossDomain: true,
         body: JSON.stringify(loginData),
         headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          "Access-Control-Allow-Origin": "*",
+          "Content-type": "application/json",
         },
       })
         .then((res) => res.json())
@@ -71,31 +68,6 @@ const App = () => {
 
   return (
     <div>
-      {/* <nav>
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/login">Login</Link>
-          </li>
-          <li>
-            <Link to="/profile">Profile</Link>
-          </li>
-          <li>
-            <Link to="/editprofile">EditProfile</Link>
-          </li>
-          <li>
-            <Link to="/mysubgreddits">My Sub Greddiits</Link>
-          </li>
-          <li>
-            <Link to="/akasubgreddits">AkaSubGreddiits</Link>
-          </li>
-          <li>
-            <Link to="/savedpost">SavedPosts</Link>
-          </li>
-        </ul>
-      </nav> */}
       <Routes>
         <Route
           exact
@@ -111,9 +83,21 @@ const App = () => {
         />
         <Route
           exact
-          path="/login"
+          path="/signin"
           element={
-            <LoginReg
+            <SignIn
+              Loginval={isLoggedin}
+              Loginfunc={setLogin}
+              userData={userData}
+              setUserData={setUserData}
+            />
+          }
+        />
+        <Route
+          exact
+          path="/signup"
+          element={
+            <SignUp
               Loginval={isLoggedin}
               Loginfunc={setLogin}
               userData={userData}

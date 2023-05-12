@@ -88,15 +88,12 @@ const AkaSubGreddit = (props) => {
   let navigate = useNavigate();
   useEffect(() => {
     // function to be called on page load/refresh
-    const SubgredditObj = () => {
+    const SubgredditObj = async () => {
       console.log("Page loaded/refreshed");
-      fetch(`http://localhost:7000/api/akasubgreddits/dataall`, {
+      await fetch(`http://localhost:7000/api/akasubgreddits/dataall`, {
         method: "GET",
-        crossDomain: true,
         headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          "Access-Control-Allow-Origin": "*",
+          "Content-type": "application/json",
         },
       })
         .then((res) => res.json())
