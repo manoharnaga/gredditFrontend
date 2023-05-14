@@ -19,17 +19,7 @@ import MuiAlert from "@mui/material/Alert";
 import CopyRight from "./CopyRight";
 import app from "./firebase-config";
 
-import {
-  getAuth,
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-  signInWithPopup,
-  GoogleAuthProvider,
-  FacebookAuthProvider,
-  getAdditionalUserInfo,
-  signInWithRedirect,
-  getRedirectResult,
-} from "firebase/auth";
+import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider, getAdditionalUserInfo, signOut, signInWithRedirect, getRedirectResult } from "firebase/auth";
 
 const auth = getAuth(app);
 const Gprovider = new GoogleAuthProvider();
@@ -62,88 +52,30 @@ const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-const signInWithGoogle = (handleClickSnack2) => {
-  const auth = getAuth();
-  signInWithPopup(auth, Gprovider)
-    .then((result) => {
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const token = credential.accessToken;
-      // The signed-in user info.
-      const user = result.user;
-      console.log(user);
-      // alert("Hello" + user.displayName);
-      handleClickSnack2();
-      console.log(getAdditionalUserInfo(result));
-      // IdP data available using getAdditionalUserInfo(result)
-      // ...
-    })
-    .catch((error) => {
-      // Handle Errors here.
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // The email of the user's account used.
-      // const email = error.customData.email;
-      // The AuthCredential type that was used.
-      const credential = GoogleAuthProvider.credentialFromError(error);
-      // ...
-    });
-};
+// const signInWithFacebook = (handleClickSnack2) => {
+//   const auth = getAuth();
+//   signInWithPopup(auth, Fprovider)
+//     .then((result) => {
+//       // The signed-in user info.
+//       const user = result.user;
+//       console.log(user);
+//       handleClickSnack2();
+//       // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+//       // const credential = FacebookAuthProvider.credentialFromResult(result);
+//       // const accessToken = credential.accessToken;
+//     })
+//     .catch((error) => {
+//       // Handle Errors here.
+//       const errorCode = error.code;
+//       const errorMessage = error.message;
+//       // The email of the user's account used.
+//       const email = error.customData.email;
+//       // The AuthCredential type that was used.
+//       const credential = FacebookAuthProvider.credentialFromError(error);
+//     });
+// };
 
-const signInWithFacebook = (handleClickSnack2) => {
-  const auth = getAuth();
-  //     signInWithRedirect(auth, Fprovider);
-  //     getRedirectResult(auth)
-  //   .then((result) => {
-  //     // This gives you a Facebook Access Token. You can use it to access the Facebook API.
-  //     const credential = FacebookAuthProvider.credentialFromResult(result);
-  //     const token = credential.accessToken;
-
-  //     const user = result.user;
-  //     console.log(user);
-  //     handleClickSnack2();
-  //     console.log(getAdditionalUserInfo(result));
-
-  //     // IdP data available using getAdditionalUserInfo(result)
-  //     // ...
-  //   }).catch((error) => {
-  //     // Handle Errors here.
-  //     const errorCode = error.code;
-  //     const errorMessage = error.message;
-  //     // The email of the user's account used.
-  //     const email = error.customData.email;
-  //     // AuthCredential type that was used.
-  //     const credential = FacebookAuthProvider.credentialFromError(error);
-  //     // ...
-  //   });
-  signInWithPopup(auth, Fprovider)
-    .then((result) => {
-      // The signed-in user info.
-      const user = result.user;
-      console.log(user);
-      handleClickSnack2();
-      console.log(getAdditionalUserInfo(result));
-      // This gives you a Facebook Access Token. You can use it to access the Facebook API.
-      const credential = FacebookAuthProvider.credentialFromResult(result);
-      const accessToken = credential.accessToken;
-
-      // IdP data available using getAdditionalUserInfo(result)
-      // ...
-    })
-    .catch((error) => {
-      // Handle Errors here.
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // The email of the user's account used.
-      const email = error.customData.email;
-      // The AuthCredential type that was used.
-      const credential = FacebookAuthProvider.credentialFromError(error);
-
-      // ...
-    });
-};
-
-const AltSignIn = () => {
+const AltSignIn = (props) => {
   const [userData, setUserData] = useState({
     phno: " +91 ",
     otpVal: "",
@@ -162,7 +94,7 @@ const AltSignIn = () => {
     setUserData({
       phno: " +91 ",
       otpVal: "",
-    })
+    });
   };
 
   const [openSnack1, setOpenSnack1] = React.useState(false);
@@ -198,6 +130,62 @@ const AltSignIn = () => {
       [e.target.name]: e.target.value,
     });
   };
+
+  const altSignin = async (userinfo,altType) => {
+    await fetch(`http://localhost:7000/api/auth/altlogin`, {
+      method: "POST",
+      body: JSON.stringify({userinfo, altType}),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error("Invalid Signin Request!!");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        const token = data.user.token;
+        localStorage.setItem("token", JSON.stringify(token));
+        props.setUserData(data.user);
+        props.Loginfunc("true");
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
+  const signInWithGoogle = (handleClickSnack2) => {
+    const auth = getAuth();
+    signInWithPopup(auth, Gprovider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        // const credential = GoogleAuthProvider.credentialFromResult(result);
+        // const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        handleClickSnack2();
+        const signFlag = props.signFlag;
+        if (!signFlag) {
+          const encodedData = encodeURIComponent(JSON.stringify({ userinfo: user.email, altType: "google"}));
+          window.location.href = `/altsignupusername?data=${encodedData}`;
+        } else {
+          altSignin(user.email,"google");
+        }
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        // const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
+  };
+
 
   const reCaptchaVerify = () => {
     window.recaptchaVerifier = new RecaptchaVerifier(
@@ -241,9 +229,14 @@ const AltSignIn = () => {
       .then((result) => {
         // User signed in successfully.
         const user = result.user;
-        console.log(user);
-        handleClickSnack2();
-        // ...
+        const signFlag = props.signFlag;
+        // handleClickSnack2();
+        if (!signFlag) {
+          const encodedData = encodeURIComponent(JSON.stringify({ userinfo: user.phoneNumber, altType: "phno"}));
+          window.location.href = `/altsignupusername?data=${encodedData}`;
+        } else {
+          altSignin(user.phno,"phno");
+        }
       })
       .catch((error) => {
         alert("Wrong OTP!,please Try again");
@@ -251,6 +244,9 @@ const AltSignIn = () => {
         // ...
       });
   };
+
+  
+
 
   return (
     <div>
@@ -264,23 +260,11 @@ const AltSignIn = () => {
               alignItems: "center",
             }}
           >
-            <Button
-              variant="outlined"
-              size="large"
-              sx={{ mt: 1, mb: 1.5 }}
-              onClick={handleOpen}
-              startIcon={<PhoneIcon />}
-              fullWidth
-            >
-              Signin with Phone
+            <Button variant="outlined" size="large" sx={{ mt: 1, mb: 1.5 }} onClick={handleOpen} startIcon={<PhoneIcon />} fullWidth>
+              {props.signFlag ? "Sign in":"Sign up"} with Phone
             </Button>
 
-            <Modal
-              open={open}
-              onClose={handleClose}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
-            >
+            <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
               <Box sx={style}>
                 <Box sx={{ position: "absolute", top: 0, right: 0 }}>
                   <IconButton onClick={handleClose}>
@@ -288,44 +272,16 @@ const AltSignIn = () => {
                   </IconButton>
                 </Box>
                 <Typography textAlign={"center"} variant="h6" color="primary">
-                  Signin with Phone No.
+                {props.signFlag ? "Sign in":"Sign up"} with Phone No.
                 </Typography>
                 <Typography textAlign={"center"} hidden={otpHidden}>
                   One-time password Has been sent
                 </Typography>
-                <Typography
-                  textAlign={"center"}
-                  hidden={otpHidden}
-                  sx={{ fontWeight: "bold" }}
-                >
+                <Typography textAlign={"center"} hidden={otpHidden} sx={{ fontWeight: "bold" }}>
                   {userData.phno}
                 </Typography>
-                <TextField
-                  margin="normal"
-                  id="phno"
-                  label="Phone Number"
-                  type="text"
-                  value={userData.phno}
-                  onChange={handleSignInChange}
-                  name="phno"
-                  autoFocus
-                  fullWidth
-                  error={Boolean(errorPhone)}
-                  helperText={errorPhone}
-                  required
-                />
-                <TextField
-                  margin="normal"
-                  label="*****"
-                  id="otpVal"
-                  type="password"
-                  value={userData.otpVal}
-                  onChange={handleSignInChange}
-                  name="otpVal"
-                  hidden={otpHidden}
-                  autoFocus
-                  fullWidth
-                />
+                <TextField margin="normal" id="phno" label="Phone Number" type="text" value={userData.phno} onChange={handleSignInChange} name="phno" autoFocus fullWidth error={Boolean(errorPhone)} helperText={errorPhone} required />
+                <TextField margin="normal" label="*****" id="otpVal" type="password" value={userData.otpVal} onChange={handleSignInChange} name="otpVal" hidden={otpHidden} autoFocus fullWidth />
                 <Button
                   type="button"
                   variant="contained"
@@ -370,13 +326,13 @@ const AltSignIn = () => {
               size="large"
               sx={{ mt: 0, mb: 1 }}
               onClick={() => {
-                signInWithGoogle(handleClickSnack2);
+                signInWithGoogle(handleClickSnack2, props.signFlag, props.setUniqueUserErr);
               }}
               hidden={buttonsHidden}
               fullWidth
               startIcon={<GoogleIcon />}
             >
-              Sign In With Google
+              {props.signFlag ? "Sign in":"Sign up"} With Google
             </Button>
             <Button
               variant="contained"
@@ -389,41 +345,32 @@ const AltSignIn = () => {
                 backgroundColor: "#EA255B",
               }}
               onClick={() => {
-                signInWithFacebook(handleClickSnack2);
+                // signInWithFacebook(handleClickSnack2, props.signFlag);
               }}
               hidden={buttonsHidden}
               fullWidth
               startIcon={<FacebookIcon />}
             >
-              Sign In With Facebook
+              {props.signFlag ? "Sign in":"Sign up"} With Facebook
             </Button>
             <CopyRight />
           </Box>
         </Container>
 
         <Stack spacing={2} sx={{ width: "100%" }}>
-          <Snackbar
-            anchorOrigin={{ vertical: "top", horizontal: "right" }}
-            open={openSnack1}
-            autoHideDuration={6000}
-            onClose={handleCloseSnack1}
-          >
+          <Snackbar anchorOrigin={{ vertical: "top", horizontal: "right" }} open={openSnack1} autoHideDuration={6000} onClose={handleCloseSnack1}>
             <Alert onClose={handleCloseSnack1} severity="success">
               Success: OTP sent!
             </Alert>
           </Snackbar>
 
-          <Snackbar
-            anchorOrigin={{ vertical: "top", horizontal: "right" }}
-            open={openSnack2}
-            autoHideDuration={6000}
-            onClose={handleCloseSnack2}
-          >
+          <Snackbar anchorOrigin={{ vertical: "top", horizontal: "right" }} open={openSnack2} autoHideDuration={6000} onClose={handleCloseSnack2}>
             <Alert onClose={handleCloseSnack2} severity="success">
               Login Successfull!
             </Alert>
           </Snackbar>
         </Stack>
+
       </div>
     </div>
   );

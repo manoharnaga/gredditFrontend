@@ -62,9 +62,7 @@ const SavedPost = (props) => {
             setCommentArr(commentList);
             setAkaSubGreddits(AkaSubgredditsSent);
           } else {
-            console.log(
-              "Unable to fetch AkaSubgreddit Data! - AkaSubgreddit.jsx"
-            );
+            console.log("Unable to fetch AkaSubgreddit Data! - AkaSubgreddit.jsx");
           }
         })
         .catch((error) => console.error("Error:", error));
@@ -75,7 +73,7 @@ const SavedPost = (props) => {
   }, [props.userData.username, location.pathname]);
 
   if (props.Loginval === "false") {
-    return <Navigate to="/login" />;
+    return <Navigate to="/signin" />;
   }
 
   const handlePostCommentChange = (e, postobj_id) => {
@@ -180,17 +178,7 @@ const SavedPost = (props) => {
       })
       .catch((error) => console.error("Error:", error));
   };
-  const card = (
-    postobj_id,
-    subid,
-    id,
-    subname,
-    postedBy,
-    Text,
-    upvotes,
-    downvotes,
-    comments
-  ) => {
+  const card = (postobj_id, subid, id, subname, postedBy, Text, upvotes, downvotes, comments) => {
     // id ==> postid && card ===> post
     return (
       <React.Fragment>
@@ -316,17 +304,8 @@ const SavedPost = (props) => {
             }}
             aria-label="no. of posts"
           >
-            {upvotes.includes(props.userData.username) ? (
-              <ThumbUpIcon color="primary" />
-            ) : (
-              <ThumbUpOutlinedIcon />
-            )}
-            <Typography
-              variant="subtitle2"
-              color={
-                upvotes.includes(props.userData.username) ? "primary" : null
-              }
-            >
+            {upvotes.includes(props.userData.username) ? <ThumbUpIcon color="primary" /> : <ThumbUpOutlinedIcon />}
+            <Typography variant="subtitle2" color={upvotes.includes(props.userData.username) ? "primary" : null}>
               {upvotes?.length}
             </Typography>
           </IconButton>
@@ -344,17 +323,8 @@ const SavedPost = (props) => {
             }}
             aria-label="no. of people"
           >
-            {downvotes.includes(props.userData.username) ? (
-              <ThumbDownIcon color="primary" />
-            ) : (
-              <ThumbDownOutlinedIcon />
-            )}
-            <Typography
-              variant="subtitle2"
-              color={
-                downvotes.includes(props.userData.username) ? "primary" : null
-              }
-            >
+            {downvotes.includes(props.userData.username) ? <ThumbDownIcon color="primary" /> : <ThumbDownOutlinedIcon />}
+            <Typography variant="subtitle2" color={downvotes.includes(props.userData.username) ? "primary" : null}>
               {downvotes?.length}
             </Typography>
           </IconButton>
@@ -378,12 +348,7 @@ const SavedPost = (props) => {
 
   return (
     <div>
-      <Navbar
-        Loginval={props.Loginval}
-        Loginfunc={props.Loginfunc}
-        userData={props.userData}
-        setUserData={props.setUserData}
-      />
+      <Navbar Loginval={props.Loginval} Loginfunc={props.Loginfunc} userData={props.userData} setUserData={props.setUserData} />
       <br />
       <br />
       <br />
@@ -395,19 +360,7 @@ const SavedPost = (props) => {
           // postobj
           postobj.savedby.includes(props.userData.username) ? (
             <Box key={postobj.id} sx={{ minWidth: 275 }}>
-              <Card variant="outlined">
-                {card(
-                  postobj._id,
-                  subgreddit._id,
-                  postobj.id,
-                  subgreddit.name,
-                  postobj.postedBy,
-                  postobj.Text,
-                  postobj.upvotes,
-                  postobj.downvotes,
-                  postobj.comments
-                )}
-              </Card>
+              <Card variant="outlined">{card(postobj._id, subgreddit._id, postobj.id, subgreddit.name, postobj.postedBy, postobj.Text, postobj.upvotes, postobj.downvotes, postobj.comments)}</Card>
             </Box>
           ) : null
         )

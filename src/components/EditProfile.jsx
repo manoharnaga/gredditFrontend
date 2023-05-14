@@ -47,7 +47,7 @@ const EditProfile = (props) => {
   let navigate = useNavigate();
 
   if (props.Loginval === "false") {
-    return <Navigate to="/login" />;
+    return <Navigate to="/signin" />;
   }
 
   const handleEditProfileChange = (e) => {

@@ -72,7 +72,7 @@ const MySubGreddits = (props) => {
   }, []);
 
   if (props.Loginval === "false") {
-    return <Navigate to="/login" />;
+    return <Navigate to="/signin" />;
   }
 
   const addTags = (e) => {

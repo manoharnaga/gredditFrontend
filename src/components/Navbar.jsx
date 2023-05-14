@@ -223,6 +223,7 @@ const Navbar = (props) => {
               }
               onClick={(event) => {
                 event.preventDefault();
+                localStorage.removeItem("token");
                 props.Loginfunc("false");
               }}
               sx={{

@@ -131,7 +131,7 @@ const AkaSubGreddit = (props) => {
   // }, [searchBarValue]);
 
   if (props.Loginval === "false") {
-    return <Navigate to="/login" />;
+    return <Navigate to="/signin" />;
   }
 
   const OpenSubGreddit = (_id) => {

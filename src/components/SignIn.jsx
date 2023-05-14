@@ -21,10 +21,10 @@ import AltSignIn from "./SignInAlt";
 const theme = createTheme();
 
 const SignIn = (props) => {
-  const [newUser, setUser] = useState(0);
-  const [inpError, setError] = useState(0);
+  // const [newUser, setUser] = useState(0);
+  const [inpError, setError] = useState(false);
   const [LoginDisabled, setLoginDisabled] = useState(1);
-  
+
   const [loginData, setLogindata] = useState({
     username: "",
     password: "",
@@ -35,7 +35,6 @@ const SignIn = (props) => {
     console.log("Home" + inpError);
     return <Navigate to="/" />;
   }
-  
 
   // Login functions
   const handleLoginChange = (e) => {
@@ -58,39 +57,34 @@ const SignIn = (props) => {
     if (LoginDisabled === 1) return;
     await fetch(`http://localhost:7000/api/auth/login`, {
       method: "POST",
-      crossDomain: true,
       body: JSON.stringify(loginData),
       headers: {
         "Content-Type": "application/json",
-        Accept: "application/json",
-        "Access-Control-Allow-Origin": "*",
       },
     })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("login", data);
-        if (data.status === "Login successful!") {
-          const userdata = data.user;
-          localStorage.setItem("token", JSON.stringify(data.token));
-          // localStorage.setItem("username", JSON.stringify(loginData.username));
-          // localStorage.setItem("password", JSON.stringify(loginData.password));
-          props.setUserData(userdata);
-          setError(0);
-          props.Loginfunc("true");
-        } else {
-          setError(1);
+      .then((res) => {
+        if (res.status !== 200) {
+          setError(true);
+          throw new Error("Invalid Username/Password!!");
         }
-        setLogindata({ username: "", password: "" });
+        return res.json();
       })
-      .catch((error) => console.error("Error:", error));
+      .then((data) => {
+        const token = data.user.token;
+        localStorage.setItem("token", JSON.stringify(token));
+        props.setUserData(data.user);
+        props.Loginfunc("true");
+      })
+      .catch((error) => {
+        setError(true);
+        console.error("Error:", error);
+      });
   };
 
   return (
     <div>
       <ThemeProvider theme={theme}>
-        
         <Container component="main" maxWidth="xs">
-          
           <CssBaseline />
           <Box
             sx={{
@@ -170,10 +164,7 @@ const SignIn = (props) => {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link
-                    href="/signup"
-                    variant="body2"
-                  >
+                  <Link href="/signup" variant="body2">
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>
@@ -181,7 +172,7 @@ const SignIn = (props) => {
             </Box>
           </Box>
         </Container>
-        <AltSignIn/>
+        <AltSignIn signFlag={1} setUserData={props.setUserData} Loginfunc={props.Loginfunc}/>
       </ThemeProvider>
     </div>
   );

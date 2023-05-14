@@ -38,7 +38,7 @@ const Profile = (props) => {
   });
 
   if (props.Loginval === "false") {
-    return <Navigate to="/login" />;
+    return <Navigate to="/signin" />;
   }
 
   const handleClose = (event, reason) => {
@@ -52,7 +52,6 @@ const Profile = (props) => {
   const removeFollow = async (username, followerUsername, flagFollow) => {
     await fetch(`http://localhost:7000/api/profile/followers`, {
       method: "PUT",
-      crossDomain: true,
       body: JSON.stringify({
         username: username,
         followerUsername: followerUsername,
@@ -60,18 +59,18 @@ const Profile = (props) => {
       }),
       headers: {
         "Content-Type": "application/json",
-        Accept: "application/json",
-        "Access-Control-Allow-Origin": "*",
         Authorization: `Bearer ${props.userData.token}`,
       },
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new Error("Invalid request!");
+        }
+        return res.json();
+      })
       .then((data) => {
-        if (data.status === "both recieved") {
-          console.log("both recieved", data);
           const userdata = data.firstResponse;
           props.setUserData(userdata);
-        }
       })
       .catch((error) => {
         console.error("Error:", error);

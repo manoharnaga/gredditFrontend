@@ -14,6 +14,7 @@ import * as React from "react";
 // import { Toolbar } from "@mui/material";
 import SavedPost from "./SavedPost";
 import EditProfile from "./EditProfile";
+import AltSignUp from "./SignUpAlt";
 
 const App = () => {
   const [isLoggedin, setLogin] = useState(() => {
@@ -21,7 +22,7 @@ const App = () => {
     return initialValue || "";
   });
   const [userData, setUserData] = useState(0);
-
+  
   useEffect(() => {
     // storing input name
     localStorage.setItem("login-key", JSON.stringify(isLoggedin));
@@ -29,165 +30,54 @@ const App = () => {
 
   useEffect(() => {
     // function to be called on page load/refresh
-    const loginDatafunc = () => {
-      const usernameSaved = JSON.parse(localStorage.getItem("username"));
-      // const passwordSaved = JSON.parse(localStorage.getItem("password"));
-      return { username: usernameSaved || "" };
-    };
-
-    let loginData = loginDatafunc();
     const userObj = async () => {
       console.log("Page loaded/refreshed");
-      console.log("logindata from localStorage", loginData);
+      let token = null;
+      try {
+        token = JSON.parse(localStorage.getItem("token"));
+      } catch (error) {
+        console.error("Error parsing JSON:", error);
+      }
+
       await fetch(`http://localhost:7000/api/auth/loginstore`, {
         method: "POST",
-        body: JSON.stringify(loginData),
         headers: {
           "Content-type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-          if (data.status === "Login successful!") {
-            const userdata = data.user;
-            setLogin("true");
-            setUserData(userdata);
-          } else {
-            console.log("Unable to fetch User Data! - App.jsx");
+        .then((res) => {
+          if (res.status !== 200) {
+            throw new Error("Invalid token!");
           }
+          return res.json();
+        })
+        .then((data) => {
+          const userdata = data.user;
+          setUserData(userdata);
+          setLogin("true");
         })
         .catch((error) => {
           console.error("Error:", error);
         });
     };
-    if (JSON.parse(localStorage.getItem("login-key")) === "true") {
-      userObj();
-    }
+    userObj();
   }, []);
 
   return (
     <div>
       <Routes>
-        <Route
-          exact
-          path="/"
-          element={
-            <Home
-              Loginval={isLoggedin}
-              Loginfunc={setLogin}
-              userData={userData}
-              setUserData={setUserData}
-            />
-          }
-        />
-        <Route
-          exact
-          path="/signin"
-          element={
-            <SignIn
-              Loginval={isLoggedin}
-              Loginfunc={setLogin}
-              userData={userData}
-              setUserData={setUserData}
-            />
-          }
-        />
-        <Route
-          exact
-          path="/signup"
-          element={
-            <SignUp
-              Loginval={isLoggedin}
-              Loginfunc={setLogin}
-              userData={userData}
-              setUserData={setUserData}
-            />
-          }
-        />
-        <Route
-          exact
-          path="/profile"
-          element={
-            <Profile
-              Loginval={isLoggedin}
-              Loginfunc={setLogin}
-              userData={userData}
-              setUserData={setUserData}
-            />
-          }
-        />
-        <Route
-          exact
-          path="/editprofile"
-          element={
-            <EditProfile
-              Loginval={isLoggedin}
-              Loginfunc={setLogin}
-              userData={userData}
-              setUserData={setUserData}
-            />
-          }
-        />
-        <Route
-          exact
-          path="/mysubgreddits"
-          element={
-            <MySubGreddits
-              Loginval={isLoggedin}
-              Loginfunc={setLogin}
-              userData={userData}
-              setUserData={setUserData}
-            />
-          }
-        />
-        <Route
-          path="/mysubgreddits/:id"
-          element={
-            <SubGredditMod
-              Loginval={isLoggedin}
-              Loginfunc={setLogin}
-              userData={userData}
-              setUserData={setUserData}
-            />
-          }
-        />
-        <Route
-          exact
-          path="/akasubgreddits"
-          element={
-            <AkaSubGreddit
-              Loginval={isLoggedin}
-              Loginfunc={setLogin}
-              userData={userData}
-              setUserData={setUserData}
-            />
-          }
-        />
-        <Route
-          exact
-          path="/akasubgreddits/:id"
-          element={
-            <Post
-              Loginval={isLoggedin}
-              Loginfunc={setLogin}
-              userData={userData}
-              setUserData={setUserData}
-            />
-          }
-        />
-        <Route
-          exact
-          path="/savedpost"
-          element={
-            <SavedPost
-              Loginval={isLoggedin}
-              Loginfunc={setLogin}
-              userData={userData}
-              setUserData={setUserData}
-            />
-          }
-        />
+        <Route exact path="/signin" element={<SignIn Loginval={isLoggedin} Loginfunc={setLogin} userData={userData} setUserData={setUserData} />} />
+        <Route exact path="/altsignupusername" element={<AltSignUp Loginval={isLoggedin} Loginfunc={setLogin} userData={userData} setUserData={setUserData} />} />
+        <Route exact path="/signup" element={<SignUp Loginval={isLoggedin} Loginfunc={setLogin} userData={userData} setUserData={setUserData} />} />
+        <Route exact path="/" element={<Home Loginval={isLoggedin} Loginfunc={setLogin} userData={userData} setUserData={setUserData} />} />
+        <Route exact path="/profile" element={<Profile Loginval={isLoggedin} Loginfunc={setLogin} userData={userData} setUserData={setUserData} />} />
+        <Route exact path="/editprofile" element={<EditProfile Loginval={isLoggedin} Loginfunc={setLogin} userData={userData} setUserData={setUserData} />} />
+        <Route exact path="/mysubgreddits" element={<MySubGreddits Loginval={isLoggedin} Loginfunc={setLogin} userData={userData} setUserData={setUserData} />} />
+        <Route path="/mysubgreddits/:id" element={<SubGredditMod Loginval={isLoggedin} Loginfunc={setLogin} userData={userData} setUserData={setUserData} />} />
+        <Route exact path="/akasubgreddits" element={<AkaSubGreddit Loginval={isLoggedin} Loginfunc={setLogin} userData={userData} setUserData={setUserData} />} />
+        <Route exact path="/akasubgreddits/:id" element={<Post Loginval={isLoggedin} Loginfunc={setLogin} userData={userData} setUserData={setUserData} />} />
+        <Route exact path="/savedpost" element={<SavedPost Loginval={isLoggedin} Loginfunc={setLogin} userData={userData} setUserData={setUserData} />} />
       </Routes>
     </div>
   );
