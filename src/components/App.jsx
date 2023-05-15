@@ -34,7 +34,8 @@ const App = () => {
       console.log("Page loaded/refreshed");
       let token = null;
       try {
-        token = JSON.parse(localStorage.getItem("token"));
+        const tokenObj = JSON.parse(localStorage.getItem("token"));
+        token = tokenObj.token;
       } catch (error) {
         console.error("Error parsing JSON:", error);
       }

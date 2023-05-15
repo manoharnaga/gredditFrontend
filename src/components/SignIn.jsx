@@ -32,7 +32,6 @@ const SignIn = (props) => {
 
   if (props.Loginval === "true") {
     // already logged in!
-    console.log("Home" + inpError);
     return <Navigate to="/" />;
   }
 
@@ -71,7 +70,7 @@ const SignIn = (props) => {
       })
       .then((data) => {
         const token = data.user.token;
-        localStorage.setItem("token", JSON.stringify(token));
+        localStorage.setItem("token", JSON.stringify({token:token}));
         props.setUserData(data.user);
         props.Loginfunc("true");
       })

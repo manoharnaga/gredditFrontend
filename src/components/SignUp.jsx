@@ -159,8 +159,10 @@ const SignUp = (props) => {
         console.log(data);
         if (data.status === "Error submitting new UserRegistration!") {
           alert("Error submitting new UserRegistration!");
+          window.location.href = "/signup";
         } else {
           alert("Registration Successful!");
+          window.location.href = "/signin";
         }
       })
       .catch((error) => console.error("Error:", error));
