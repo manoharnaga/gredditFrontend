@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { Navigate, useNavigate, useLocation } from "react-router-dom";
 
 import * as React from "react";
@@ -20,7 +20,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Navbar from "./Navbar";
 
 import app from "./firebase-config";
-import {ref, uploadString, getDownloadURL,getStorage} from "firebase/storage";
+import {ref, uploadString, getDownloadURL,getStorage,deleteObject} from "firebase/storage";
 const storage = getStorage(app);
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -33,10 +33,10 @@ const Profile = (props) => {
     Following: "none",
   });
   // const [EditProfile,setEditProfile] = useState("");
-  const [profilepic, setProfilepic] = useState(props.userData.profilepic);
+  const [profilepic, setProfilepic] = useState(null);
   const [changedProfilepic, setChangedProfilepic] = useState(false);
-  const [fileName, setFileName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const fileInputRef = React.useRef(null);
 
   let location = useLocation();
   let navigate = useNavigate();
@@ -47,6 +47,24 @@ const Profile = (props) => {
     // console.log(flag);
     return flag;
   });
+
+
+  useEffect(() => {
+    const temp = localStorage.getItem("profilepic");
+    if(temp){
+      try{
+        const profilepicStore = JSON.parse(temp);
+        setProfilepic(profilepicStore.profilepic);
+      }
+      catch(error){
+        console.error("Error parsing JSON:", error);
+      }
+    }
+    else{
+      alert("Profile pic not found");
+    }
+  },[]);
+
 
   if (props.Loginval === "false") {
     return <Navigate to="/signin" />;
@@ -60,6 +78,13 @@ const Profile = (props) => {
   };
 
   const removeFollow = async (username, followerUsername, flagFollow) => {
+    let token = null;
+      try {
+        const tokenObj = JSON.parse(localStorage.getItem("token"));
+        token = tokenObj.token;
+      } catch (error) {
+        console.error("Error parsing JSON:", error);
+      }
     await fetch(`http://localhost:7000/api/profile/followers`, {
       method: "PUT",
       body: JSON.stringify({
@@ -69,7 +94,7 @@ const Profile = (props) => {
       }),
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${props.userData.token}`,
+        Authorization: `Bearer ${token}`,
       },
     })
       .then((res) => {
@@ -79,6 +104,9 @@ const Profile = (props) => {
         return res.json();
       })
       .then((data) => {
+        if(data.newToken){
+          localStorage.setItem("token", JSON.stringify({token: data.newToken}));
+        }
         const userdata = data.firstResponse;
         props.setUserData(userdata);
       })
@@ -123,7 +151,6 @@ const Profile = (props) => {
           ctx.drawImage(img, 0, 0, width, height);
 
           const base64Image = canvas.toDataURL(file.type);
-          setFileName(file.name);
           setChangedProfilepic(true);
           setProfilepic(base64Image);
         };
@@ -145,12 +172,33 @@ const Profile = (props) => {
 
     setIsLoading(true);
     const base64Image = profilepic.split(",")[1];
-    const imgRef = ref(storage, `images/${fileName}`);
+    const imgRef = ref(storage, `images/${props.userData.username}_profilepic`);
+    await
+    getDownloadURL(imgRef)
+    .then(() => {
+        deleteObject(imgRef).then(() => {
+          console.log("Previous File deleted successfully");
+        }).catch((error) => {
+          alert("Uh-oh, an error occurred!"); 
+        });
+    }).catch((error) => {  
+      if (error.code === 'storage/object-not-found') {
+        console.log('Image does not exist');
+      } else {
+        console.error('Error checking image existence:', error);
+      }
+    });
 
     const snapshot = await uploadString(imgRef, base64Image, "base64");
 
     const imgUrl = await getDownloadURL(snapshot.ref);
-
+    let token = null;
+      try {
+        const tokenObj = JSON.parse(localStorage.getItem("token"));
+        token = tokenObj.token;
+      } catch (error) {
+        console.error("Error parsing JSON:", error);
+      }
     await fetch(`http://localhost:7000/api/profile/uploadimage`, {
       method: "PUT",
       body: JSON.stringify({
@@ -158,12 +206,15 @@ const Profile = (props) => {
       }),
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${props.userData.token}`,
+        Authorization: `Bearer ${token}`,
       },
     })
       .then((res) => res.json())
       .then((data) => {
         const userdata = data.user;
+        if(data.newToken){
+          localStorage.setItem("token", JSON.stringify({token: data.newToken}));
+        }
         if (data.status === "Updated Profilepic successfully!") {
           setIsLoading(false);
           setProfilepic(userdata.profilepic);
@@ -196,13 +247,14 @@ const Profile = (props) => {
                 <label htmlFor="image-upload" className="upload-label">
                 <EditTwoToneIcon sx={{ fontSize: "1.7rem" }} />
             </label>
-                  <input type="file" id="image-upload" name="image" onChange={handleProfiePicChange} hidden={true}/>
+                  <input ref={fileInputRef} type="file" id="image-upload" name="image" onChange={handleProfiePicChange} hidden={true}/>
                 </Button>
                 <Button hidden={!changedProfilepic} variant="contained" sx={{backgroundColor:"#3E6417","&:hover": { backgroundColor: "#253E0B" },}} onClick={handleImageUpload}>Update Profile Pic</Button>
                 <Button hidden={!changedProfilepic} onClick={()=>{
                   setChangedProfilepic(false);
                   setProfilepic(props.userData.profilepic);
                   setIsLoading(false);
+                  fileInputRef.current.value = '';
                 }}>Cancel</Button>
               </TableCell> 
             </TableRow>

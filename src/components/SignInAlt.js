@@ -146,7 +146,7 @@ const AltSignIn = (props) => {
         return res.json();
       })
       .then((data) => {
-        const token = data.user.token;
+        const token = data.token;
         localStorage.setItem("token", JSON.stringify(token));
         props.setUserData(data.user);
         props.Loginfunc("true");

@@ -22,7 +22,7 @@ const App = () => {
     return initialValue || "";
   });
   const [userData, setUserData] = useState(0);
-  
+
   useEffect(() => {
     // storing input name
     localStorage.setItem("login-key", JSON.stringify(isLoggedin));
@@ -55,6 +55,10 @@ const App = () => {
         })
         .then((data) => {
           const userdata = data.user;
+          if(data.newToken){
+            localStorage.setItem("token", JSON.stringify({token: data.newToken}));
+          }
+          localStorage.setItem("profilepic", JSON.stringify({profilepic: userdata.profilepic}));
           setUserData(userdata);
           setLogin("true");
         })
