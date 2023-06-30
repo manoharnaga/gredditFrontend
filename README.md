@@ -1,16 +1,11 @@
 
 # Greddit : [Click Here!](https://github.com/manoharnaga/greddit "Click Here!")
 
-</br>
-
 ## To Run Code:
 ```
 - npm i
 - npm start
 ```
-</br>
-
-
 
 <!-- ### FIX BUGS/Submission format -->
 <!-- - navbar -->
