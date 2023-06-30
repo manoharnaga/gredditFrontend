@@ -1,8 +1,18 @@
 
+# Greddit : [Click Here!](https://github.com/manoharnaga/greddit "Click Here!")
+
+</br>
+
+## To Run Code:
+```
+- npm i
+- npm start
+```
+</br>
 
 
 
-### FIX BUGS/Submission format
+<!-- ### FIX BUGS/Submission format -->
 <!-- - navbar -->
 <!-- - unique username   -->
 <!-- - add edit profile option in profile page -->
@@ -52,8 +62,7 @@
 
 
 
-
-
+<!--
 
 # Getting Started with Create React App
 
@@ -125,3 +134,4 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+-->
