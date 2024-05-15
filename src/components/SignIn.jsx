@@ -70,7 +70,9 @@ const SignIn = (props) => {
       })
       .then((data) => {
         const token = data.token;
-        localStorage.setItem("token", JSON.stringify({token:token}));
+        localStorage.setItem("token", token);
+        localStorage.setItem("profilepic", data.user.profilepic);
+        
         props.setUserData(data.user);
         props.Loginfunc("true");
       })

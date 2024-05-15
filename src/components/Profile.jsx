@@ -50,15 +50,9 @@ const Profile = (props) => {
 
 
   useEffect(() => {
-    const temp = localStorage.getItem("profilepic");
-    if(temp){
-      try{
-        const profilepicStore = JSON.parse(temp);
-        setProfilepic(profilepicStore.profilepic);
-      }
-      catch(error){
-        console.error("Error parsing JSON:", error);
-      }
+    const profilepicStore = localStorage.getItem("profilepic");
+    if(profilepicStore){
+      setProfilepic(profilepicStore);
     }
     else{
       alert("Profile pic not found");
@@ -78,13 +72,6 @@ const Profile = (props) => {
   };
 
   const removeFollow = async (username, followerUsername, flagFollow) => {
-    let token = null;
-      try {
-        const tokenObj = JSON.parse(localStorage.getItem("token"));
-        token = tokenObj.token;
-      } catch (error) {
-        console.error("Error parsing JSON:", error);
-      }
     await fetch(`http://localhost:7000/api/profile/followers`, {
       method: "PUT",
       body: JSON.stringify({
@@ -94,7 +81,7 @@ const Profile = (props) => {
       }),
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${props.token}`,
       },
     })
       .then((res) => {
@@ -104,9 +91,9 @@ const Profile = (props) => {
         return res.json();
       })
       .then((data) => {
-        if(data.newToken){
-          localStorage.setItem("token", JSON.stringify({token: data.newToken}));
-        }
+        // if(data.newToken){
+        //   localStorage.setItem("token", JSON.stringify({token: data.newToken}));
+        // }
         const userdata = data.firstResponse;
         props.setUserData(userdata);
       })
@@ -192,13 +179,6 @@ const Profile = (props) => {
     const snapshot = await uploadString(imgRef, base64Image, "base64");
 
     const imgUrl = await getDownloadURL(snapshot.ref);
-    let token = null;
-      try {
-        const tokenObj = JSON.parse(localStorage.getItem("token"));
-        token = tokenObj.token;
-      } catch (error) {
-        console.error("Error parsing JSON:", error);
-      }
     await fetch(`http://localhost:7000/api/profile/uploadimage`, {
       method: "PUT",
       body: JSON.stringify({
@@ -206,15 +186,15 @@ const Profile = (props) => {
       }),
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${props.token}`,
       },
     })
       .then((res) => res.json())
       .then((data) => {
         const userdata = data.user;
-        if(data.newToken){
-          localStorage.setItem("token", JSON.stringify({token: data.newToken}));
-        }
+        // if(data.newToken){
+        // localStorage.setItem("token", JSON.stringify({token: data.newToken}));
+        // }
         if (data.status === "Updated Profilepic successfully!") {
           setIsLoading(false);
           setProfilepic(userdata.profilepic);

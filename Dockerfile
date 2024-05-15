@@ -1,28 +1,27 @@
-FROM node:16-alpine
+# Use a Node.js base image for building
+FROM node:latest as build
 
-# ? install node
-RUN apk add python3 make g++ 
+# Set the working directory in the container
+WORKDIR /app
 
-# ? creat new user (optional)
-USER node 
+# Copy your frontend application files to the container
+COPY . .
 
-RUN mkdir -p /home/node/app
-WORKDIR /home/node/app
+# Install dependencies and build frontend
+RUN npm install
+RUN npm run build
 
-# ? copy package.json and package-lock.json
-COPY --chown=node:node package*.json ./
+# Use a lightweight Node.js image for serving the frontend
+FROM node:alpine
 
-# ? ci is exact install ( without upgraded version )
-RUN npm i
+# Set the working directory in the container
+WORKDIR /app
 
-# ? first . my PC
-# ? second . docker working dir
-COPY --chown=node:node . ./
+# Copy the built frontend files from the previous stage
+COPY --from=build /app/build ./build
 
-# ? give access to 3000 port of docker
+# Expose the port
 EXPOSE 3000
 
-# RUN chmod +x /bin/sh
-# RUN ls -a /bin/
-RUN npm run build
-CMD npx serve -s build -l 3000
+# Command to serve the frontend
+CMD ["npx", "serve", "-s", "build"]

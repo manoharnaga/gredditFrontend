@@ -72,7 +72,7 @@ const SignUp = (props) => {
 
     getAllUsernames();   
   }, []);
-
+  console.log("HEllooooooo signup");
   if (props.Loginval === "true") {
     // already logged in!
     console.log("Home" + inpError);

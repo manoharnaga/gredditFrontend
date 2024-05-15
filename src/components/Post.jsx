@@ -91,6 +91,7 @@ const Post = (props) => {
               commentList.push({
                 postId: postobj._id,
                 comment: "",
+                recurse: [],
                 disabled: true,
               });
               return postobj;
@@ -126,6 +127,7 @@ const Post = (props) => {
               postId: commentObj.postId,
               comment: e.target.value,
               disabled: !(e.target.value.length > 0),
+              ...commentObj,
             }
           : commentObj
       );
@@ -412,7 +414,7 @@ const Post = (props) => {
           >
             CANCEL
           </Button>
-
+            {/* <2>update</2> */}
           {comments?.map((comment, index) => (
             //  {comment.userId} :
             <Typography key={index} variant="body2">
